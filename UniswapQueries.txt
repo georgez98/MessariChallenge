@@ -1,0 +1,30 @@
+
+
+#Given an asset ID
+#What pools exist that include it?
+
+query PoolsGivenAssetID ($id: ID!){
+  token(id: $id) {
+    whitelistPools {
+      id
+    }
+  }
+}
+
+#What is the total volume of that asset swapped in a given time range
+
+#Arguments: tokenId, start, end
+#start & end are passed in as unix timestamps (in hours or days) in string format
+{
+  "startId": tokenId + "-" + start,
+  "endId": tokenId + "-" + end
+}
+
+
+query AssetTradedVolumeInTimeRange($startId: ID!, $endId: ID!){
+  #can use tokenDayDatas here depending on desired granularity
+  tokenHourDatas(where: {id_gte: $startId, id_lte: $endId}) {
+    volume
+    volumeUSD
+  }
+}
