@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
-import { Bundle, Burn, Factory, User, Mint, Pool, Swap, Tick, Token } from '../types/schema'
-import { Pool as PoolABI } from '../types/Factory/Pool'
+import { Bundle, Burn, Factory, User, Mint, Pool, Swap, Tick, Token } from '../../generated/schema'
+import { Pool as PoolABI } from '../../generated/Factory/Pool'
 import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {
   Burn as BurnEvent,
@@ -8,7 +8,7 @@ import {
   Initialize,
   Mint as MintEvent,
   Swap as SwapEvent
-} from '../types/templates/Pool/Pool'
+} from '../../generated/templates/Pool/Pool'
 import { convertTokenToDecimal, loadTransaction, safeDiv } from '../utils'
 import { FACTORY_ADDRESS, ONE_BI, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { findEthPerToken, getEthPriceInUSD, getTrackedAmountUSD, sqrtPriceX96ToTokenPrices } from '../utils/pricing'
@@ -70,9 +70,9 @@ export function handleMint(event: MintEvent): void {
   factory.txCount = factory.txCount.plus(ONE_BI)
 
   //check if new user
-  let user = User.load(event.params.sender)
+  let user = User.load(event.transaction.from.toHexString())
   if (user === null) {
-    user = new User(event.params.sender)
+    user = new User(event.transaction.from.toHexString())
     factory.totalUniqueUsers.plus(ONE_BI)
     user.save()
   }
@@ -197,9 +197,9 @@ export function handleBurn(event: BurnEvent): void {
   factory.txCount = factory.txCount.plus(ONE_BI)
 
   //check if new user
-  let user = User.load(event.params.sender)
+  let user = User.load(event.transaction.from.toHexString())
   if (user === null) {
-    user = new User(event.params.sender)
+    user = new User(event.transaction.from.toHexString())
     factory.totalUniqueUsers.plus(ONE_BI)
     user.save()
   }
@@ -336,9 +336,9 @@ export function handleSwap(event: SwapEvent): void {
   factory.totalFeesUSD = factory.totalFeesUSD.plus(feesUSD)
 
   //check if new user
-  let user = User.load(event.params.sender)
+  let user = User.load(event.transaction.from.toHexString())
   if (user === null) {
-    user = new User(event.params.sender)
+    user = new User(event.transaction.from.toHexString())
     factory.totalUniqueUsers.plus(ONE_BI)
     user.save()
   }
