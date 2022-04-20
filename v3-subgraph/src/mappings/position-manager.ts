@@ -5,8 +5,8 @@ import {
   IncreaseLiquidity,
   NonfungiblePositionManager,
   Transfer
-} from '../types/NonfungiblePositionManager/NonfungiblePositionManager'
-import { Bundle, Position, PositionSnapshot, Token } from '../types/schema'
+} from '../../generated/NonfungiblePositionManager/NonfungiblePositionManager'
+import { Bundle, Position, PositionSnapshot, Token } from '../../generated/schema'
 import { ADDRESS_ZERO, factoryContract, ZERO_BD, ZERO_BI } from '../utils/constants'
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import { convertTokenToDecimal, loadTransaction } from '../utils'
