@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Bundle, Burn, Factory, Mint, Pool, Swap, Tick, Token } from '../types/schema'
+import { Bundle, Burn, Factory, User, Mint, Pool, Swap, Tick, Token } from '../types/schema'
 import { Pool as PoolABI } from '../types/Factory/Pool'
 import { BigDecimal, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {
@@ -68,6 +68,14 @@ export function handleMint(event: MintEvent): void {
 
   // update globals
   factory.txCount = factory.txCount.plus(ONE_BI)
+
+  //check if new user
+  let user = User.load(event.params.sender)
+  if (user === null) {
+    user = new User(event.params.sender)
+    factory.totalUniqueUsers.plus(ONE_BI)
+    user.save()
+  }
 
   // update token0 data
   token0.txCount = token0.txCount.plus(ONE_BI)
@@ -187,6 +195,14 @@ export function handleBurn(event: BurnEvent): void {
 
   // update globals
   factory.txCount = factory.txCount.plus(ONE_BI)
+
+  //check if new user
+  let user = User.load(event.params.sender)
+  if (user === null) {
+    user = new User(event.params.sender)
+    factory.totalUniqueUsers.plus(ONE_BI)
+    user.save()
+  }
 
   // update token0 data
   token0.txCount = token0.txCount.plus(ONE_BI)
@@ -318,6 +334,14 @@ export function handleSwap(event: SwapEvent): void {
   factory.untrackedVolumeUSD = factory.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
   factory.totalFeesETH = factory.totalFeesETH.plus(feesETH)
   factory.totalFeesUSD = factory.totalFeesUSD.plus(feesUSD)
+
+  //check if new user
+  let user = User.load(event.params.sender)
+  if (user === null) {
+    user = new User(event.params.sender)
+    factory.totalUniqueUsers.plus(ONE_BI)
+    user.save()
+  }
 
   // reset aggregate tvl before individual pool tvl updates
   let currentPoolTvlETH = pool.totalValueLockedETH

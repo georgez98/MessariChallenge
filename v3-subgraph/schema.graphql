@@ -24,8 +24,17 @@ type Factory @entity {
   # TVL derived in ETH untracked
   totalValueLockedETHUntracked: BigDecimal!
 
+  #number of total/cumulative unique users
+  totalUniqueUsers: BigInt!
+
   # current owner of the factory
   owner: ID!
+}
+
+#store user addresses to keep track of unique users
+type User @entity {
+  #user address
+  id: ID!
 }
 
 # stores for USD calculations
