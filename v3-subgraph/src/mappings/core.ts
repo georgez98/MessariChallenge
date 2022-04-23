@@ -68,13 +68,9 @@ export function handleMint(event: MintEvent): void {
 
   // update globals
   factory.txCount = factory.txCount.plus(ONE_BI)
-
   //check if new user
-  let user = User.load(event.transaction.from.toHexString())
-  if (user === null) {
-    user = new User(event.transaction.from.toHexString())
+  if (checkNewUser(event.transaction.from.toHexString())) {
     factory.totalUniqueUsers.plus(ONE_BI)
-    user.save()
   }
 
   // update token0 data
@@ -195,14 +191,11 @@ export function handleBurn(event: BurnEvent): void {
 
   // update globals
   factory.txCount = factory.txCount.plus(ONE_BI)
-
   //check if new user
-  let user = User.load(event.transaction.from.toHexString())
-  if (user === null) {
-    user = new User(event.transaction.from.toHexString())
+  if (checkNewUser(event.transaction.from.toHexString())) {
     factory.totalUniqueUsers.plus(ONE_BI)
-    user.save()
   }
+
 
   // update token0 data
   token0.txCount = token0.txCount.plus(ONE_BI)
@@ -334,14 +327,11 @@ export function handleSwap(event: SwapEvent): void {
   factory.untrackedVolumeUSD = factory.untrackedVolumeUSD.plus(amountTotalUSDUntracked)
   factory.totalFeesETH = factory.totalFeesETH.plus(feesETH)
   factory.totalFeesUSD = factory.totalFeesUSD.plus(feesUSD)
-
   //check if new user
-  let user = User.load(event.transaction.from.toHexString())
-  if (user === null) {
-    user = new User(event.transaction.from.toHexString())
+  if (checkNewUser(event.transaction.from.toHexString())) {
     factory.totalUniqueUsers.plus(ONE_BI)
-    user.save()
   }
+
 
   // reset aggregate tvl before individual pool tvl updates
   let currentPoolTvlETH = pool.totalValueLockedETH
@@ -552,5 +542,16 @@ function loadTickUpdateFeeVarsAndSave(tickId: i32, event: ethereum.Event): void 
   )
   if (tick !== null) {
     updateTickFeeVarsAndSave(tick!, event)
+  }
+}
+
+function checkNewUser(userId: string): boolean {
+  let user = User.load(userId)
+  if (user === null) {
+    user = new User(userId)
+    user.save()
+    return true
+  } else {
+    return false
   }
 }
